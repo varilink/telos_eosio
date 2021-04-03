@@ -1,0 +1,44 @@
+version: "3.6"
+
+services:
+
+  eosio:
+
+    build:
+      context: ./eosio
+      args:
+        - VER=${VER}
+
+    image: varilink/eosio:${VER}
+
+  cleos:
+
+    build:
+      context: ./cleos
+      args:
+        - VER=${VER}
+
+    image: varilink/cleos:${VER}
+
+    depends_on:
+      - keosd
+
+  keosd:
+
+    build:
+      context: ./keosd
+      args:
+        - VER=${VER}
+
+    image: varilink/keosd:${VER}
+
+    container_name: varilink-keosd
+
+    expose:
+      - 8888
+
+    volumes:
+      - eosio-wallet:/root/eosio-wallet
+
+volumes:
+  eosio-wallet:
