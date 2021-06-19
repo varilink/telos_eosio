@@ -1,0 +1,2 @@
+# Ignore any nodeos configuration that is provided
+/config

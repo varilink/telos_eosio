@@ -2,23 +2,16 @@ version: "3.6"
 
 services:
 
-  eosio:
+  cleos:
 
     build:
-      context: ./eosio
+      context: .
       args:
         - VER=${VER}
 
     image: varilink/eosio:${VER}
 
-  cleos:
-
-    build:
-      context: ./cleos
-      args:
-        - VER=${VER}
-
-    image: varilink/cleos:${VER}
+    entrypoint: cleos.sh
 
     depends_on:
       - keosd
@@ -26,19 +19,63 @@ services:
   keosd:
 
     build:
-      context: ./keosd
+      context: .
       args:
         - VER=${VER}
 
-    image: varilink/keosd:${VER}
+    image: varilink/eosio:${VER}
 
-    container_name: varilink-keosd
+    container_name: eosio-keosd
+
+    entrypoint: keosd.sh
 
     expose:
-      - 8888
+      - "8888"
 
     volumes:
-      - eosio-wallet:/root/eosio-wallet
+      - wallet:/wallet
+
+  nodeos:
+
+    build:
+      context: .
+      args:
+        - VER=${VER}
+
+    image: varilink/eosio:${VER}
+
+    container_name: eosio-nodeos
+
+    entrypoint: nodeos.sh
+
+    command:
+      --http-server-address eosio-nodeos:8888
+      --plugin eosio::chain_api_plugin
+
+    expose:
+      - "8888"
+
+    volumes:
+      - ./config:/config
+      - data:/data
+
+  snapshot:
+
+    build:
+      context: .
+      args:
+        - VER=${VER}
+
+    image: varilink/eosio:${VER}
+
+    entrypoint: snapshot.sh
+
+    volumes:
+      - ./config:/config
+      - data:/data
 
 volumes:
-  eosio-wallet:
+  # nodeos data directory, Docker Compose will auto name this as eosio_data
+  data:
+  # keosd wallet directory, Docker Compose will auto name this as eosio_wallet
+  wallet:
