@@ -74,6 +74,22 @@ services:
       - ./config:/config
       - data:/data
 
+  data:
+
+    build:
+      context: .
+      args:
+        - VER=${VER}
+
+    image: varilink/eosio:${VER}
+
+    entrypoint: /bin/bash
+
+    working_dir: /data
+
+    volumes:
+      - data:/data
+
 volumes:
   # nodeos data directory, Docker Compose will auto name this as eosio_data
   data:

@@ -1,14 +1,35 @@
 #!/usr/bin/env bash
 
+set -e
+
 #-------------------------------------------------------------------------------
 # Entrypoint for our snapshot Docker Compose service
 #-------------------------------------------------------------------------------
 
+defaults=""
+
+if [[
+  ! ( "$@" =~ ^"--config-dir " || "$@" =~ " --config-dir " )
+]]; then
+  defaults+="--config-dir=config "
+fi
+
+if [[
+  ! ( "$@" =~ ^"-d " || "$@" =~ " -d " ) &&
+  ! ( "$@" =~ ^"--data-dir " || "@$" =~ " --data-dir " )
+]]; then
+  defaults+="--data-dir=data "
+fi
+
+if [[ ! (
+  "$@" =~ ^"--protocol-features-dir " ||
+  "$@" =~ " --protocol-features-dir "
+) ]]; then
+  defaults+="--protocol-features-dir=/protocol_features "
+fi
+
 # Start nodeos in background, configured to provide the producer API locally
-nodeos                                                                         \
-  --config-dir /config                                                         \
-  --data-dir /data                                                             \
-  --protocol-features-dir /protocol_features                                   \
+nodeos $defaults                                                               \
   --http-server-address 127.0.0.1:8888                                         \
   --plugin eosio::producer_api_plugin 1>/dev/null 2>&1 &
 
