@@ -12,9 +12,12 @@ RUN                                                                            \
   apt-get update                                                            && \
   apt-get --yes --no-install-recommends install                                \
     ca-certificates                                                            \
+    coreutils                                                                  \
     curl                                                                       \
+    jq                                                                         \
     libjson-pp-perl                                                            \
-    wget                                                                    && \
+    wget                                                                       \
+    xxd                                                                     && \
   wget -P /tmp $DOWNLOAD/v${VER}/eosio_${VER}-1-ubuntu-18.04_amd64.deb      && \
   apt-get --yes install                                                        \
     /tmp/eosio_${VER}-1-ubuntu-18.04_amd64.deb

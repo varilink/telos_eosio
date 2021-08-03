@@ -90,6 +90,17 @@ services:
     volumes:
       - data:/data
 
+  multisig:
+
+    build:
+      context: .
+      args:
+        - VER=${VER}
+
+    image: varilink/eosio:${VER}
+
+    entrypoint: multisig.sh
+
 volumes:
   # nodeos data directory, Docker Compose will auto name this as eosio_data
   data:
